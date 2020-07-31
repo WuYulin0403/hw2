@@ -1,0 +1,28 @@
+install.packages("quantmod")
+library(quantmod)
+install.packages("ggplot2")
+library(ggplot2)
+
+cases <- read.csv('covid19 .csv')
+
+
+newcases <- cases[,'new']
+death <- cases[,'death']
+
+start <- as.Date("2020-02-01")
+end <- as.Date("2020-06-01")
+getSymbols("^GSPC", src = "yahoo", from = start, to = end)
+close<-GSPC$GSPC.Close
+
+#merge S&P500 close, newcases and death data
+data <- cbind(close, newcases, death)
+
+ggplot(data, aes(x=newcases, y=close)) + 
+  geom_point()+
+  geom_smooth(method=lm, se=FALSE)
+ggplot(data, aes(x=death, y=close)) + 
+  geom_point()+
+  geom_smooth(method=lm, se=FALSE)
+
+
+heatmap(data,Colv = NULL, Rowv = NULL, scale="column")
